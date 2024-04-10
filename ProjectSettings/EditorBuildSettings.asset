@@ -5,9 +5,24 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
+    path: Assets/Scenes/RayMenuFromSDK.unity
+    guid: 5543434de70a485f8995a0fbacfd93b5
+  - enabled: 0
+    path: Assets/Samples/Meta XR Interaction SDK OVR Samples/60.0.0/Example Scenes/RayExamples.unity
+    guid: 1b2d3f90c0f50b94cb910c66c773d00d
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 0
+    path: Assets/Scenes/MainMenu.unity
+    guid: 19f2408e2cc965f45abbeecc276cb64d
+  - enabled: 0
+    path: Assets/Samples/Meta XR Interaction SDK OVR Samples/60.0.0/Example Scenes/PokeExamples.unity
+    guid: ada3086bde0ab18459589e22d8d9e182
+  - enabled: 1
+    path: Assets/Scenes/RayExamples 1.unity
+    guid: cd1db747f09a6b347b406f46e349e638
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 5600f6b8b0841be42b32edf4a486d896, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: a8c7c7446bab6fc41b869e9cd9e48f79, type: 2}
