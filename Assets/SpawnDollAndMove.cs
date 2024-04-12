@@ -7,6 +7,7 @@ public class SpawnDollAndMove : MonoBehaviour
     public GameObject player;
     public GameObject enemyPrefab;
     public GameObject weaponOnCrushedEnemy;
+    public AudioClip deathSound;
     private List<GameObject> enemies = new List<GameObject>();
 
     void Start()
@@ -66,14 +67,16 @@ public class SpawnDollAndMove : MonoBehaviour
     {
         public float speed;
         public ParticleSystem deathEffect;
-        public AudioClip deathSound;
         public bool isDead = false;
         public GameObject weaponOnCrushedEnemy;
         public SpawnDollAndMove spawnDollAndMove;
+        public Break_Ghost breakGhost; // Add this
+
 
         void Start()
         {
             spawnDollAndMove = FindObjectOfType<SpawnDollAndMove>();
+            breakGhost = GetComponent<Break_Ghost>();
         }
 
         void OnCollisionEnter(Collision collision)
@@ -81,7 +84,11 @@ public class SpawnDollAndMove : MonoBehaviour
             if (collision.gameObject.CompareTag("Cylinder"))
             {
                 spawnDollAndMove.RemoveEnemy(gameObject);
-                Destroy(gameObject);
+                breakGhost.break_Ghost(); // Break the ghost
+                                          // AudioSource audioSource = spawnDollAndMove.deathSound.GetComponent<AudioSource>(); // Get the AudioSource from spawnDollAndMove
+                                          // audioSource.Play(); // Play the sound
+                AudioSource.PlayClipAtPoint(spawnDollAndMove.deathSound, transform.position); // Play the sound
+                Destroy(gameObject, 4f);
             }
         }
     }
