@@ -34,13 +34,13 @@ public class SpawnDollAndMove : MonoBehaviour
 
     public void SpawnEnemy()
     {
-        for (int i = 1; i <= 10; i++)
+        for (int i = 1; i <= 8; i++)
         {
             GameObject enemyClone = Instantiate(enemyPrefab);
             enemyClone.name = "Enemy" + i;
-            enemyClone.transform.position = new Vector3(Random.Range(-100.0f, 100.0f), 1.5f, Random.Range(-100.0f, 100.0f));
+            enemyClone.transform.position = new Vector3(Random.Range(-10.0f, 10.0f), 1.5f, Random.Range(-10.0f, 10.0f));
             enemyClone.AddComponent<Enemy>();
-            enemyClone.GetComponent<Enemy>().speed = Random.Range(0.3f, 0.4f);
+            enemyClone.GetComponent<Enemy>().speed = Random.Range(0.001f, 0.003f);
             enemies.Add(enemyClone);
         }
     }
@@ -55,6 +55,14 @@ public class SpawnDollAndMove : MonoBehaviour
         {
             enemies.Remove(enemy);
             Destroy(enemy);
+        }
+        if (enemy.transform.position.y > 1.0f) // Change this value to your desired maximum height
+        {
+            enemy.transform.position = new Vector3(enemy.transform.position.x, 1.0f, enemy.transform.position.z);
+        }
+        if (Vector3.Dot(directionToPlayer.normalized, enemy.transform.forward) < 0.9f)
+        {
+            enemy.transform.position = new Vector3(Random.Range(-10.0f, 10.0f), 1.5f, Random.Range(-10.0f, 10.0f));
         }
     }
 

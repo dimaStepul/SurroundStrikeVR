@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class FadeScreen : MonoBehaviour
 {
+    public bool fadeOnStart = true;
     public float fadeDuration = 2;
     public Color fadeColor;
     private Renderer rend;
@@ -11,6 +12,10 @@ public class FadeScreen : MonoBehaviour
     void Start()
     {
         rend = GetComponent<Renderer>();
+        if (fadeOnStart)
+        {
+            FadeIn();
+        }
     }
 
     public void FadeIn()
