@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Cylinder
   - Enemy
+  - Ground
   layers:
   - Default
   - TransparentFX

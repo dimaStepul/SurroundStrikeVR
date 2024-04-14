@@ -9,20 +9,23 @@ public class CubeSpawnAreaScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void OnTriggerExit(Collider other)
     {
         // When cube leaves
-        if (other.gameObject.layer == 6) {
-            Instantiate(cube, transform.position, transform.rotation);
+        if (other.gameObject.layer == 6)
+        {
+            GameObject newCube = Instantiate(cube, transform.position, transform.rotation);
+            newCube.tag = "Cylinder";
+            newCube.AddComponent<WeaponBehavior>();
         }
     }
 }
