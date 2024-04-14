@@ -13,7 +13,6 @@ Library: C:\Users\diais\Documents\GitHub\SurroundStrikeVR\Temp\BurstOutput\tempb
 --assembly-defines=mscorlib;
 --assembly-defines=Oculus.Interaction;
 --assembly-defines=Oculus.Interaction.OVR;
---assembly-defines=Oculus.Interaction.OVR.Samples;
 --assembly-defines=Oculus.VR;
 --assembly-defines=System.Configuration;
 --assembly-defines=System.Core;

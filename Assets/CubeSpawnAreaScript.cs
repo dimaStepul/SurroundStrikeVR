@@ -5,6 +5,7 @@ using UnityEngine;
 public class CubeSpawnAreaScript : MonoBehaviour
 {
     public GameObject cube;
+    private int cubeCount = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -15,7 +16,23 @@ public class CubeSpawnAreaScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (cubeCount < 2)
+        {
+            SpawnCube();
+        }
+    }
 
+    void SpawnCube()
+    {
+        if (cubeCount > 1)
+        {
+            return;
+        }
+
+        GameObject newCube = Instantiate(cube, transform.position, transform.rotation);
+        newCube.tag = "Cylinder";
+        newCube.AddComponent<WeaponBehavior>();
+        cubeCount++;
     }
 
     void OnTriggerExit(Collider other)
@@ -23,9 +40,15 @@ public class CubeSpawnAreaScript : MonoBehaviour
         // When cube leaves
         if (other.gameObject.layer == 6)
         {
-            GameObject newCube = Instantiate(cube, transform.position, transform.rotation);
-            newCube.tag = "Cylinder";
-            newCube.AddComponent<WeaponBehavior>();
+            SpawnCube();
+        }
+    }
+
+    public void DecreaseCubeCount()
+    {
+        if (cubeCount > 0)
+        {
+            cubeCount--;
         }
     }
 }

@@ -10,8 +10,16 @@ public class SpawnDollAndMove : MonoBehaviour
     public AudioClip deathSound;
     private List<GameObject> enemies = new List<GameObject>();
 
+    private float enemyYcoordinate = 1.5f;
+
     void Start()
     {
+        StartCoroutine(DelayedStart());
+    }
+
+    IEnumerator DelayedStart()
+    {
+        yield return new WaitForSeconds(3f);
         SpawnEnemy();
     }
 
@@ -49,7 +57,7 @@ public class SpawnDollAndMove : MonoBehaviour
         {
             GameObject enemyClone = Instantiate(enemyPrefab);
             enemyClone.name = "Enemy" + i;
-            enemyClone.transform.position = new Vector3(Random.Range(-10.0f, 10.0f), 1.5f, Random.Range(-10.0f, 10.0f));
+            enemyClone.transform.position = new Vector3(Random.Range(-10.0f, 10.0f), enemyYcoordinate, Random.Range(-10.0f, 10.0f));
             Enemy enemyComponent = enemyClone.AddComponent<Enemy>();
             enemyComponent.speed = Random.Range(0.001f, 0.003f);
             enemyComponent.spawnDollAndMove = this; // Pass the reference directly
@@ -63,18 +71,18 @@ public class SpawnDollAndMove : MonoBehaviour
         enemy.transform.rotation = Quaternion.LookRotation(directionToPlayer);
         enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, new Vector3(player.transform.position.x, enemy.transform.position.y, player.transform.position.z), enemy.GetComponent<Enemy>().speed);
 
-        if (Vector3.Distance(enemy.transform.position, player.transform.position) < 2.0f)
+        if (Vector3.Distance(enemy.transform.position, player.transform.position) < enemyYcoordinate)
         {
             enemies.Remove(enemy);
             Destroy(enemy);
         }
-        if (enemy.transform.position.y > 1.0f) // Change this value to your desired maximum height
+        if (enemy.transform.position.y > 3.0f) // Change this value to your desired maximum height
         {
-            enemy.transform.position = new Vector3(enemy.transform.position.x, 1.0f, enemy.transform.position.z);
+            enemy.transform.position = new Vector3(enemy.transform.position.x, enemyYcoordinate, enemy.transform.position.z);
         }
         if (Vector3.Dot(directionToPlayer.normalized, enemy.transform.forward) < 0.9f)
         {
-            enemy.transform.position = new Vector3(Random.Range(-10.0f, 10.0f), 1.5f, Random.Range(-10.0f, 10.0f));
+            enemy.transform.position = new Vector3(Random.Range(-10.0f, 10.0f), enemyYcoordinate, Random.Range(-10.0f, 10.0f));
         }
     }
 
@@ -96,6 +104,7 @@ public class SpawnDollAndMove : MonoBehaviour
 
         void Start()
         {
+
             breakGhost = GetComponent<Break_Ghost>();
             lastPosition = transform.position;
         }
@@ -120,7 +129,7 @@ public class SpawnDollAndMove : MonoBehaviour
 
         void OnCollisionEnter(Collision collision)
         {
-            if (collision.gameObject.layer == 6)
+            if (collision.gameObject.CompareTag("Cylinder"))
             {
                 Debug.Log("Enemy collided with Cylinder");
                 spawnDollAndMove.RemoveEnemy(gameObject);
