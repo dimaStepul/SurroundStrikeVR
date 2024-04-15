@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class SpawnDollAndMove : MonoBehaviour
@@ -13,12 +14,21 @@ public class SpawnDollAndMove : MonoBehaviour
     private AudioSource approachSource; // New AudioSource for the approach sound
 
     private List<GameObject> enemies = new List<GameObject>();
-
+    public AudioClip gameOverAudio;
 
     private float enemyYcoordinate = 1.5f;
 
     // Add a counter for defeated enemies
     public int defeatedEnemiesCount = 0;
+    public TextMeshPro defeatedEnemiesCountText;
+
+    public TextMeshPro gameOverText;
+
+
+    private int timesPlayerCaught = 0;
+
+    public int healthNumber = 3;
+    public bool canMove = true;
 
     void Start()
     {
@@ -42,7 +52,7 @@ public class SpawnDollAndMove : MonoBehaviour
             MoveEnemy(enemy);
         }
 
-        if (enemies.Count < 4)
+        if (enemies.Count < 3)
         {
             SpawnEnemy();
         }
@@ -50,7 +60,7 @@ public class SpawnDollAndMove : MonoBehaviour
 
     public void SpawnEnemy()
     {
-        for (int i = 1; i <= 8; i++)
+        for (int i = 1; i <= 6; i++)
         {
             GameObject enemyClone = Instantiate(enemyPrefab);
             enemyClone.name = "Enemy" + i;
@@ -61,7 +71,7 @@ public class SpawnDollAndMove : MonoBehaviour
 
             AudioSource enemyApproachSource = enemyClone.AddComponent<AudioSource>(); // Initialize the AudioSource on the enemy
             enemyApproachSource.clip = approachSound; // Set the AudioClip
-            enemyApproachSource.loop = true; // Make the sound loop
+            // enemyApproachSource.loop = true; // Make the sound loop
             enemyApproachSource.volume = 0.0f;
             enemyApproachSource.Play(); // Start playing the sound
 
@@ -72,6 +82,10 @@ public class SpawnDollAndMove : MonoBehaviour
 
     void MoveEnemy(GameObject enemy)
     {
+        if (!canMove) // Add this line
+            return;
+
+
         Vector3 directionToPlayer = new Vector3(player.transform.position.x, enemy.transform.position.y, player.transform.position.z) - enemy.transform.position;
         enemy.transform.rotation = Quaternion.LookRotation(directionToPlayer);
         enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, new Vector3(player.transform.position.x, enemy.transform.position.y, player.transform.position.z), enemy.GetComponent<Enemy>().speed);
@@ -80,14 +94,23 @@ public class SpawnDollAndMove : MonoBehaviour
         {
             enemies.Remove(enemy);
             Destroy(enemy);
+
+            // Увеличьте счетчик каждый раз, когда враг достигает игрока
+            timesPlayerCaught++;
+
+            // Если враг достиг игрока 5 раз, вызовите функцию GameOver
+            if (timesPlayerCaught >= healthNumber)
+            {
+                GameOver();
+            }
         }
         // if (enemy.transform.position.y > 3.0f) // Change this value to your desired maximum height
         // {
         //     enemy.transform.position = new Vector3(enemy.transform.position.x, enemyYcoordinate, enemy.transform.position.z);
         // }
-        if (enemy.transform.position.y > 3.0f) // Change this value to your desired maximum height
+        if (enemy.transform.position.y > enemyYcoordinate) // Change this value to your desired maximum height
         {
-            enemy.transform.position = new Vector3(enemy.transform.position.x, 3.0f, enemy.transform.position.z);
+            enemy.transform.position = new Vector3(enemy.transform.position.x, enemyYcoordinate, enemy.transform.position.z);
         }
         if (Vector3.Dot(directionToPlayer.normalized, enemy.transform.forward) < 0.9f)
         {
@@ -95,47 +118,35 @@ public class SpawnDollAndMove : MonoBehaviour
         }
     }
 
+
+    public void GameOver()
+    {
+        Debug.Log("Game Over");
+        canMove = false;
+        gameOverText.enabled = true;
+
+        foreach (var enemy in enemies)
+        {
+            Destroy(enemy);
+
+        }
+        AudioSource.PlayClipAtPoint(gameOverAudio, player.transform.position); // Play the sound
+        StartCoroutine(RestartGameAfterDelay(5)); // 3 seconds delay
+    }
+
+    IEnumerator RestartGameAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
+
+
     public void RemoveEnemy(GameObject enemy)
     {
         enemies.Remove(enemy);
         defeatedEnemiesCount++;
+        defeatedEnemiesCountText.text = "Defeated Enemies: " + defeatedEnemiesCount;
     }
-
-    // public class Enemy : MonoBehaviour
-    // {
-    //     public float speed;
-    //     public ParticleSystem deathEffect;
-    //     public bool isDead = false;
-    //     public GameObject weaponOnCrushedEnemy;
-    //     public SpawnDollAndMove spawnDollAndMove;
-    //     public Break_Ghost breakGhost;
-
-    //     private Vector3 lastPosition;
-
-    //     void Start()
-    //     {
-
-    //         breakGhost = GetComponent<Break_Ghost>();
-    //         lastPosition = transform.position;
-    //     }
-
-    //     void Update()
-    //     {
-    //         if (transform.position == lastPosition)
-    //         {
-    //             Vector3 directionToPlayer = spawnDollAndMove.player.transform.position - transform.position;
-    //             transform.position = Vector3.MoveTowards(transform.position, directionToPlayer, speed);
-    //         }
-
-    //         if (transform.position.x < -10.0f || transform.position.x > 10.0f || transform.position.z < -10.0f || transform.position.z > 10.0f)
-    //         {
-    //             spawnDollAndMove.RemoveEnemy(gameObject);
-    //             Destroy(gameObject);
-    //         }
-
-    //         // Update the last position
-    //         lastPosition = transform.position;
-    //     }
     public class Enemy : MonoBehaviour
     {
         public float speed;
@@ -150,16 +161,13 @@ public class SpawnDollAndMove : MonoBehaviour
 
         private float soundEffectDistance = 8.0f;
 
+        private int delayBetweenSound = 2;
+
         void Start()
         {
             breakGhost = GetComponent<Break_Ghost>();
             lastPosition = transform.position;
             StartCoroutine(EnableMovementAfterDelay(1.0f)); // Add a delay before the enemy can start moving
-
-            // spawnDollAndMove.approachSource = gameObject.AddComponent<AudioSource>(); // Initialize the AudioSource
-            // spawnDollAndMove.approachSource.clip = spawnDollAndMove.approachSound; // Set the AudioClip
-            // spawnDollAndMove.approachSource.loop = true; // Make the sound loop
-            // spawnDollAndMove.approachSource.Play(); // Start playing the sound
         }
 
         IEnumerator EnableMovementAfterDelay(float delay)
@@ -167,6 +175,8 @@ public class SpawnDollAndMove : MonoBehaviour
             yield return new WaitForSeconds(delay);
             canMove = true;
         }
+
+        private bool isPlaying = false; // Add this line
 
         void Update()
         {
@@ -185,37 +195,33 @@ public class SpawnDollAndMove : MonoBehaviour
             // Update the last position
             lastPosition = transform.position;
 
-
-            // float distanceToPlayer = Vector3.Distance(transform.position, spawnDollAndMove.player.transform.position);
-
-            // // Only play the sound effect if the enemy is within soundEffectDistance units from the player
-            // if (distanceToPlayer <= soundEffectDistance)
-            // {
-            //     // Calculate the volume based on the distance to the player (closer = louder)
-            //     spawnDollAndMove.approachSource.volume = 1.0f / distanceToPlayer; // Adjust the volume based on the distance to the player
-            // }
-            // else
-            // {
-            //     spawnDollAndMove.approachSource.volume = 0; // If the enemy is too far from the player, set the volume to 0
-            // }
             AudioSource approachSource = GetComponent<AudioSource>(); // Get the AudioSource from the enemy
 
             float distanceToPlayer = Vector3.Distance(transform.position, spawnDollAndMove.player.transform.position);
 
             // Only play the sound effect if the enemy is within soundEffectDistance units from the player
-            if (distanceToPlayer <= soundEffectDistance)
+            if (distanceToPlayer <= soundEffectDistance && !isPlaying)
             {
-                // Calculate the volume based on the distance to the player (closer = louder)
-                approachSource.volume = 0.15f / distanceToPlayer; // Adjust the volume based on the distance to the player
+                // Start the coroutine to play the sound
+                StartCoroutine(PlaySoundWithDelay(approachSource, distanceToPlayer, delayBetweenSound)); // 3 seconds delay
             }
-            else
-            {
-                approachSource.volume = 0; // If the enemy is too far from the player, set the volume to 0
-            }
-
         }
 
-        // ... rest of the code ...
+        IEnumerator PlaySoundWithDelay(AudioSource approachSource, float distanceToPlayer, float delay)
+        {
+            isPlaying = true;
+
+            // Calculate the volume based on the distance to the player (closer = louder)
+            approachSource.volume = 0.15f / distanceToPlayer; // Adjust the volume based on the distance to the player
+
+            // Play the sound
+            approachSource.Play();
+
+            // Wait for the delay
+            yield return new WaitForSeconds(delay);
+
+            isPlaying = false;
+        }
 
         void OnCollisionEnter(Collision collision)
         {
