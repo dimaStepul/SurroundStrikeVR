@@ -4,19 +4,20 @@ using UnityEngine;
 
 public class CubeSpawnAreaScript : MonoBehaviour
 {
-    public GameObject cube;
-    private int cubeCount = 0;
+    public GameObject weapon;
+    private static int cubeCount = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        SpawnCube();
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (cubeCount < 2)
+        if (cubeCount < 1)
         {
             SpawnCube();
         }
@@ -24,27 +25,37 @@ public class CubeSpawnAreaScript : MonoBehaviour
 
     void SpawnCube()
     {
-        if (cubeCount > 1)
+        //     if (cubeCount > 1)
+        //     {
+        //         return;
+        //     }
+
+        //     GameObject newCube = Instantiate(cube, transform.position, transform.rotation);
+        //     newCube.tag = "Cylinder";
+        //     newCube.AddComponent<WeaponBehavior>();
+        //     cubeCount++;
+        if (cubeCount >= 4)
         {
             return;
         }
 
-        GameObject newCube = Instantiate(cube, transform.position, transform.rotation);
-        newCube.tag = "Cylinder";
-        newCube.AddComponent<WeaponBehavior>();
+        Vector3 spawnPosition = transform.position + new Vector3(0, cubeCount, 0);
+        GameObject newWeapon = Instantiate(weapon, spawnPosition, transform.rotation);
+        newWeapon.tag = "Cylinder";
+        newWeapon.AddComponent<WeaponBehavior>();
         cubeCount++;
     }
 
     void OnTriggerExit(Collider other)
     {
         // When cube leaves
-        if (other.gameObject.layer == 6)
-        {
-            SpawnCube();
-        }
+        // if (other.gameObject.layer == 6)
+        // {
+        //     SpawnCube();
+        // }
     }
 
-    public void DecreaseCubeCount()
+    public static void DecreaseCubeCount()
     {
         if (cubeCount > 0)
         {

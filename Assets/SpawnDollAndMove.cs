@@ -12,6 +12,9 @@ public class SpawnDollAndMove : MonoBehaviour
 
     private float enemyYcoordinate = 1.5f;
 
+    // Add a counter for defeated enemies
+    public int defeatedEnemiesCount = 0;
+
     void Start()
     {
         StartCoroutine(DelayedStart());
@@ -42,17 +45,6 @@ public class SpawnDollAndMove : MonoBehaviour
 
     public void SpawnEnemy()
     {
-        // for (int i = 1; i <= 8; i++)
-        // {
-        //     GameObject enemyClone = Instantiate(enemyPrefab);
-        //     enemyClone.name = "Enemy" + i;
-        //     enemyClone.transform.position = new Vector3(Random.Range(-10.0f, 10.0f), 1.5f, Random.Range(-10.0f, 10.0f));
-        //     enemyClone.AddComponent<Enemy>();
-        //     enemyClone.GetComponent<Enemy>().speed = Random.Range(0.001f, 0.003f);
-        //     enemies.Add(enemyClone);
-        // }
-
-
         for (int i = 1; i <= 8; i++)
         {
             GameObject enemyClone = Instantiate(enemyPrefab);
@@ -65,6 +57,7 @@ public class SpawnDollAndMove : MonoBehaviour
         }
     }
 
+
     void MoveEnemy(GameObject enemy)
     {
         Vector3 directionToPlayer = new Vector3(player.transform.position.x, enemy.transform.position.y, player.transform.position.z) - enemy.transform.position;
@@ -76,9 +69,13 @@ public class SpawnDollAndMove : MonoBehaviour
             enemies.Remove(enemy);
             Destroy(enemy);
         }
+        // if (enemy.transform.position.y > 3.0f) // Change this value to your desired maximum height
+        // {
+        //     enemy.transform.position = new Vector3(enemy.transform.position.x, enemyYcoordinate, enemy.transform.position.z);
+        // }
         if (enemy.transform.position.y > 3.0f) // Change this value to your desired maximum height
         {
-            enemy.transform.position = new Vector3(enemy.transform.position.x, enemyYcoordinate, enemy.transform.position.z);
+            enemy.transform.position = new Vector3(enemy.transform.position.x, 3.0f, enemy.transform.position.z);
         }
         if (Vector3.Dot(directionToPlayer.normalized, enemy.transform.forward) < 0.9f)
         {
@@ -89,8 +86,44 @@ public class SpawnDollAndMove : MonoBehaviour
     public void RemoveEnemy(GameObject enemy)
     {
         enemies.Remove(enemy);
+        defeatedEnemiesCount++;
     }
 
+    // public class Enemy : MonoBehaviour
+    // {
+    //     public float speed;
+    //     public ParticleSystem deathEffect;
+    //     public bool isDead = false;
+    //     public GameObject weaponOnCrushedEnemy;
+    //     public SpawnDollAndMove spawnDollAndMove;
+    //     public Break_Ghost breakGhost;
+
+    //     private Vector3 lastPosition;
+
+    //     void Start()
+    //     {
+
+    //         breakGhost = GetComponent<Break_Ghost>();
+    //         lastPosition = transform.position;
+    //     }
+
+    //     void Update()
+    //     {
+    //         if (transform.position == lastPosition)
+    //         {
+    //             Vector3 directionToPlayer = spawnDollAndMove.player.transform.position - transform.position;
+    //             transform.position = Vector3.MoveTowards(transform.position, directionToPlayer, speed);
+    //         }
+
+    //         if (transform.position.x < -10.0f || transform.position.x > 10.0f || transform.position.z < -10.0f || transform.position.z > 10.0f)
+    //         {
+    //             spawnDollAndMove.RemoveEnemy(gameObject);
+    //             Destroy(gameObject);
+    //         }
+
+    //         // Update the last position
+    //         lastPosition = transform.position;
+    //     }
     public class Enemy : MonoBehaviour
     {
         public float speed;
@@ -101,17 +134,24 @@ public class SpawnDollAndMove : MonoBehaviour
         public Break_Ghost breakGhost;
 
         private Vector3 lastPosition;
+        private bool canMove = false;
 
         void Start()
         {
-
             breakGhost = GetComponent<Break_Ghost>();
             lastPosition = transform.position;
+            StartCoroutine(EnableMovementAfterDelay(1.0f)); // Add a delay before the enemy can start moving
+        }
+
+        IEnumerator EnableMovementAfterDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            canMove = true;
         }
 
         void Update()
         {
-            if (transform.position == lastPosition)
+            if (canMove && transform.position == lastPosition)
             {
                 Vector3 directionToPlayer = spawnDollAndMove.player.transform.position - transform.position;
                 transform.position = Vector3.MoveTowards(transform.position, directionToPlayer, speed);
@@ -126,6 +166,8 @@ public class SpawnDollAndMove : MonoBehaviour
             // Update the last position
             lastPosition = transform.position;
         }
+
+        // ... rest of the code ...
 
         void OnCollisionEnter(Collision collision)
         {

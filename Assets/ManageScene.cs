@@ -7,13 +7,12 @@ public class ManageScene : MonoBehaviour
     public FadeScreen fadeScreen;
     public void GoToNextScene(int sceneIndex)
     {
-        StartCoroutine(GoToNextSceneRoutine(sceneIndex));
+        GoToNextSceneRoutine(sceneIndex);
     }
-    IEnumerator GoToNextSceneRoutine(int sceneIndex)
+    public void GoToNextSceneRoutine(int sceneIndex)
     {
         // fadeScreen.FadeOut();
         // yield return new WaitForSeconds(fadeScreen.fadeDuration);
-        yield return new WaitForSeconds(1);
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
 
     }

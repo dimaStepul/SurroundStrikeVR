@@ -10,11 +10,7 @@ public class WeaponBehavior : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             Destroy(gameObject);
-            CubeSpawnAreaScript cubeSpawnAreaScript = FindObjectOfType<CubeSpawnAreaScript>();
-            if (cubeSpawnAreaScript != null)
-            {
-                cubeSpawnAreaScript.DecreaseCubeCount();
-            }
+            CubeSpawnAreaScript.DecreaseCubeCount();
         }
         // if (collision.gameObject.CompareTag("Enemy"))
         // {
