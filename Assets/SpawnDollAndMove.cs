@@ -132,11 +132,13 @@ public class SpawnDollAndMove : MonoBehaviour
         }
         AudioSource.PlayClipAtPoint(gameOverAudio, player.transform.position); // Play the sound
         StartCoroutine(RestartGameAfterDelay(5)); // 3 seconds delay
+        // Time.timeScale = 0;
     }
 
     IEnumerator RestartGameAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
+        // Time.timeScale = 1;
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 

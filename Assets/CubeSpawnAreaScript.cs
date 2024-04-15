@@ -62,4 +62,9 @@ public class CubeSpawnAreaScript : MonoBehaviour
             cubeCount--;
         }
     }
+
+    void OnEnable()
+    {
+        cubeCount = 0;
+    }
 }
