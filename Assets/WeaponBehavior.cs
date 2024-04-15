@@ -12,10 +12,5 @@ public class WeaponBehavior : MonoBehaviour
             Destroy(gameObject); // This will destroy the weapon after collision
             CubeSpawnAreaScript.DecreaseCubeCount();
         }
-        // if (collision.gameObject.CompareTag("Enemy"))
-        // {
-        //     Destroy(collision.gameObject, 2.0f);
-        //     Destroy(gameObject, 2.0f); // This will destroy the weapon after collision
-        // }
     }
 }

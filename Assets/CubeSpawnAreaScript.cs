@@ -25,15 +25,6 @@ public class CubeSpawnAreaScript : MonoBehaviour
 
     void SpawnCube()
     {
-        //     if (cubeCount > 1)
-        //     {
-        //         return;
-        //     }
-
-        //     GameObject newCube = Instantiate(cube, transform.position, transform.rotation);
-        //     newCube.tag = "Cylinder";
-        //     newCube.AddComponent<WeaponBehavior>();
-        //     cubeCount++;
         if (cubeCount >= 4)
         {
             return;
