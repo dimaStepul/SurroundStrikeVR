@@ -8,7 +8,12 @@ public class SpawnDollAndMove : MonoBehaviour
     public GameObject enemyPrefab;
     public GameObject weaponOnCrushedEnemy;
     public AudioClip deathSound;
+
+    public AudioClip approachSound; // New AudioClip for the approach sound
+    private AudioSource approachSource; // New AudioSource for the approach sound
+
     private List<GameObject> enemies = new List<GameObject>();
+
 
     private float enemyYcoordinate = 1.5f;
 
@@ -53,6 +58,13 @@ public class SpawnDollAndMove : MonoBehaviour
             Enemy enemyComponent = enemyClone.AddComponent<Enemy>();
             enemyComponent.speed = Random.Range(0.001f, 0.003f);
             enemyComponent.spawnDollAndMove = this; // Pass the reference directly
+
+            AudioSource enemyApproachSource = enemyClone.AddComponent<AudioSource>(); // Initialize the AudioSource on the enemy
+            enemyApproachSource.clip = approachSound; // Set the AudioClip
+            enemyApproachSource.loop = true; // Make the sound loop
+            enemyApproachSource.volume = 0.0f;
+            enemyApproachSource.Play(); // Start playing the sound
+
             enemies.Add(enemyClone);
         }
     }
@@ -136,11 +148,18 @@ public class SpawnDollAndMove : MonoBehaviour
         private Vector3 lastPosition;
         private bool canMove = false;
 
+        private float soundEffectDistance = 8.0f;
+
         void Start()
         {
             breakGhost = GetComponent<Break_Ghost>();
             lastPosition = transform.position;
             StartCoroutine(EnableMovementAfterDelay(1.0f)); // Add a delay before the enemy can start moving
+
+            // spawnDollAndMove.approachSource = gameObject.AddComponent<AudioSource>(); // Initialize the AudioSource
+            // spawnDollAndMove.approachSource.clip = spawnDollAndMove.approachSound; // Set the AudioClip
+            // spawnDollAndMove.approachSource.loop = true; // Make the sound loop
+            // spawnDollAndMove.approachSource.Play(); // Start playing the sound
         }
 
         IEnumerator EnableMovementAfterDelay(float delay)
@@ -165,6 +184,35 @@ public class SpawnDollAndMove : MonoBehaviour
 
             // Update the last position
             lastPosition = transform.position;
+
+
+            // float distanceToPlayer = Vector3.Distance(transform.position, spawnDollAndMove.player.transform.position);
+
+            // // Only play the sound effect if the enemy is within soundEffectDistance units from the player
+            // if (distanceToPlayer <= soundEffectDistance)
+            // {
+            //     // Calculate the volume based on the distance to the player (closer = louder)
+            //     spawnDollAndMove.approachSource.volume = 1.0f / distanceToPlayer; // Adjust the volume based on the distance to the player
+            // }
+            // else
+            // {
+            //     spawnDollAndMove.approachSource.volume = 0; // If the enemy is too far from the player, set the volume to 0
+            // }
+            AudioSource approachSource = GetComponent<AudioSource>(); // Get the AudioSource from the enemy
+
+            float distanceToPlayer = Vector3.Distance(transform.position, spawnDollAndMove.player.transform.position);
+
+            // Only play the sound effect if the enemy is within soundEffectDistance units from the player
+            if (distanceToPlayer <= soundEffectDistance)
+            {
+                // Calculate the volume based on the distance to the player (closer = louder)
+                approachSource.volume = 0.15f / distanceToPlayer; // Adjust the volume based on the distance to the player
+            }
+            else
+            {
+                approachSource.volume = 0; // If the enemy is too far from the player, set the volume to 0
+            }
+
         }
 
         // ... rest of the code ...

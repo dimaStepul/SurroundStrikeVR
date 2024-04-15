@@ -9,7 +9,7 @@ public class WeaponBehavior : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            Destroy(gameObject);
+            Destroy(gameObject); // This will destroy the weapon after collision
             CubeSpawnAreaScript.DecreaseCubeCount();
         }
         // if (collision.gameObject.CompareTag("Enemy"))

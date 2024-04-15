@@ -3985,6 +3985,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 1650185867}
   weaponOnCrushedEnemy: {fileID: 294104104}
   deathSound: {fileID: 8300000, guid: 3861f9d96bb549a4f91bea4d6f9dcdaa, type: 3}
+  approachSound: {fileID: 8300000, guid: 771fedac3083cba45a80f5b473d8e2e7, type: 3}
   defeatedEnemiesCount: 0
 --- !u!4 &650050042
 Transform:
