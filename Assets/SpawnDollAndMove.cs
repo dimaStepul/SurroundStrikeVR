@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SpawnDollAndMove : MonoBehaviour
 {
@@ -21,7 +22,7 @@ public class SpawnDollAndMove : MonoBehaviour
     public int defeatedEnemiesCount = 0;
     public TextMeshPro defeatedEnemiesCountText;
 
-    public TextMeshPro gameOverText;
+    public GameObject gameOverText;
 
 
     private int timesPlayerCaught = 0;
@@ -118,7 +119,7 @@ public class SpawnDollAndMove : MonoBehaviour
     {
         Debug.Log("Game Over");
         canMove = false;
-        gameOverText.enabled = true;
+        gameOverText.SetActive(true);
 
         foreach (var enemy in enemies)
         {
@@ -132,7 +133,7 @@ public class SpawnDollAndMove : MonoBehaviour
     IEnumerator RestartGameAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
 
@@ -141,6 +142,10 @@ public class SpawnDollAndMove : MonoBehaviour
         enemies.Remove(enemy);
         defeatedEnemiesCount++;
         defeatedEnemiesCountText.text = "Defeated Enemies: " + defeatedEnemiesCount;
+        if (SceneManager.GetActiveScene().buildIndex != SceneManager.sceneCountInBuildSettings - 1 && defeatedEnemiesCount >= 15)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
     }
     public class Enemy : MonoBehaviour
     {
